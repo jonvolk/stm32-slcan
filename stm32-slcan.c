@@ -128,7 +128,7 @@ static int can_speed(int index)
         break;
     case 4:
         ret = can_init(CAN1, false, true, false, false, false, false,
-                       CAN_BTR_SJW_1TQ, CAN_BTR_TS1_13TQ, CAN_BTR_TS2_2TQ, 18, false, false);
+                       CAN_BTR_SJW_1TQ, CAN_BTR_TS1_4TQ, CAN_BTR_TS2_3TQ, 36, false, false);
         break;
     case 5:
         ret = can_init(CAN1, false, true, false, false, false, false,
@@ -136,7 +136,7 @@ static int can_speed(int index)
         break;
     case 6:
         ret = can_init(CAN1, false, true, false, false, false, false,
-                       CAN_BTR_SJW_1TQ, CAN_BTR_TS1_7TQ, CAN_BTR_TS2_1TQ, 9, false, false);
+                       CAN_BTR_SJW_1TQ, CAN_BTR_TS1_4TQ, CAN_BTR_TS2_3TQ, 9, false, false);  // was 7 2
         break;
     case 7:
         ret = can_init(CAN1, false, true, false, false, false, false,
@@ -174,16 +174,18 @@ static void can_setup(void)
 
     /* Reset CAN */
     can_reset(CAN1);
+    //can_speed(6);
 
     /* defaultt CAN setting 250 kBaud */
-    if (can_speed(6))
+    //if (can_speed(6))
     {
-        gpio_clear(GPIOC, GPIO13); /* LED green on */
+      //  gpio_clear(GPIOC, GPIO13); /* LED green on */
 
         /* Die because we failed to initialize. */
-        while (1)
-            __asm__("nop");
+      // while (1)
+       //     __asm__("nop");
     }
+    
 
     /* CAN filter 0 init. */
     can_filter_id_mask_32bit_init(
@@ -361,7 +363,7 @@ static int slcan_command(void)
         id = get_nibbles(3);
         dlc = get_nibbles(1);
         break;
-    case 's': // was 'S"
+    case 'S': // was 'S"
         c = get_nibbles(1);
         can_speed(c);
         send = false;
@@ -427,6 +429,7 @@ int main(void)
     //rcc_clock_setup_in_hse_8mhz_out_72mhz();
     gpio_setup();
     can_setup();
+    can_speed(6);
     usart_setup();
     systick_setup();
     //iwdg_start();
